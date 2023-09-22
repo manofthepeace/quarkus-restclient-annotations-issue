@@ -1,16 +1,34 @@
 package org.acme;
 
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 
-@Path("/hello")
+@Path("/")
 public class GreetingResource {
 
+    @RestClient
+    MyRestClient annotatedClient;
+
+    @RestClient
+    MyRestClient2 contextResolverClient;
+
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public String hello() {
-        return "Hello from RESTEasy Reactive";
+    @Path("/hello")
+    public Entity hello() {
+        return new Entity("hello");
+    }
+
+    @GET
+    @Path("/test")
+    public Entity testclient() {
+        return annotatedClient.hello();
+    }
+
+    @GET
+    @Path("/test2")
+    public Entity testclient2() {
+        return contextResolverClient.hello();
     }
 }

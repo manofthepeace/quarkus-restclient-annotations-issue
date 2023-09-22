@@ -1,6 +1,7 @@
 package org.acme;
 
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
+import org.jboss.logging.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -13,9 +14,11 @@ import jakarta.ws.rs.core.Response;
 @RegisterRestClient(baseUri = "http://localhost:8080")
 public interface MyRestClient {
 
+    Logger LOG = Logger.getLogger(MyRestClient.class);
+
     @GET
     @Path("/hello")
-    public String hello();
+    public Entity hello();
 
     @ClientExceptionMapper
     static RuntimeException toException(Response response) {
@@ -24,7 +27,9 @@ public interface MyRestClient {
 
     @ClientObjectMapper
     static ObjectMapper objectMapper(ObjectMapper defaultObjectMapper) {
-        return defaultObjectMapper;
+        ObjectMapper mapper = defaultObjectMapper.copy();
+        LOG.infof("Copied mapper [%s] from original [%s]", mapper.toString(), defaultObjectMapper.toString());
+        return mapper;
     }
 
 }
