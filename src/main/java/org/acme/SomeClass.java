@@ -1,24 +1,18 @@
 package org.acme;
 
-import static io.quarkus.scheduler.Scheduled.ConcurrentExecution.SKIP;
-
-import io.quarkus.arc.WithCaching;
-import io.quarkus.scheduler.Scheduled;
-import jakarta.enterprise.inject.Instance;
+import io.quarkus.runtime.Startup;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+@ApplicationScoped
 public class SomeClass {
 
     @Inject
-    @WithCaching
-    Instance<MyService> service;
+    MyService service;
 
-    @Scheduled(every = "5s", identity = "identity", concurrentExecution = SKIP)
+    @Startup
     void myScheduledMethod() {
-
-        if (service.isResolvable()) {
-            service.get().aMethod();
-        }
+        service.aMethod();
     }
 
 }
